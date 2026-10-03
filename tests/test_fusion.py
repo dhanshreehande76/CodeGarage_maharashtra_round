@@ -42,3 +42,17 @@ def test_uncertain_borderline():
 def test_uncertain_single_source():
     out = run(0.05)
     assert out["verdict"] == "uncertain"
+def test_image_real_analyzer_schema():
+    results = {
+        "image": {
+            "prediction": {
+                "ai_generated_probability": 0.90,
+            }
+        }
+    }
+
+    out = fuse(results, [])
+
+    assert out["risks"]["image"] == 0.90
+    assert out["verdict"] == "manipulated"
+
