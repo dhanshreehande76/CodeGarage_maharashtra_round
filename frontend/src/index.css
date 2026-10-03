@@ -1,0 +1,50 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+:root {
+  color-scheme: light;
+  --forensic-edge-high: #dc2626;
+  --forensic-risk-high: #be123c;
+  --forensic-risk-medium: #b45309;
+  --forensic-risk-low: #0f766e;
+  --forensic-gauge-track: #cbd5e1;
+  --forensic-graph-line: #94a3b8;
+  --forensic-graph-label: #334155;
+  --forensic-edge-high-label: #9f1239;
+}
+
+:root.dark {
+  color-scheme: dark;
+  --forensic-edge-high: #ff394e;
+  --forensic-risk-high: #ff5964;
+  --forensic-risk-medium: #e9b45a;
+  --forensic-risk-low: #49c7a2;
+  --forensic-gauge-track: #263a36;
+  --forensic-graph-line: #68847c;
+  --forensic-graph-label: #9eb4ac;
+  --forensic-edge-high-label: #ff9ba2;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #f8fafc;
+  color: #0f172a;
+  font-family: "Aptos", "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root { min-height: 100vh; }
+
+html.dark body {
+  background: #020617;
+  color: #cbd5e1;
+}
+
+@keyframes slide-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}

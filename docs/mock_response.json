@@ -1,0 +1,61 @@
+{
+  "verdict": "coordinated_synthetic",
+  "trust_score": 0.18,
+  "confidence": 0.82,
+  "modalities": {
+    "image": {
+      "synthetic_prob": 0.91,
+      "signals": [
+        "AI-generator likelihood high",
+        "No camera EXIF metadata present"
+      ]
+    },
+    "video": {
+      "manipulation_prob": 0.68,
+      "signals": [
+        "Sampled frames contain visual inconsistencies",
+        "Video origin could not be verified"
+      ]
+    },
+    "audio": {
+      "spoof_prob": 0.77,
+      "transcript": "The bridge is open and traffic is moving normally."
+    },
+    "text": {
+      "claims": [
+        "The bridge collapsed this morning after severe flooding."
+      ]
+    }
+  },
+  "cross_modal": [
+    {
+      "pair": "image-text",
+      "score": 0.21,
+      "finding": "Image content does not match the claim"
+    },
+    {
+      "pair": "audio-text",
+      "score": 0.34,
+      "finding": "Transcript contradicts the claim"
+    },
+    {
+      "pair": "video-text",
+      "score": 0.29,
+      "finding": "Sampled video frames do not support the reported event"
+    }
+  ],
+  "evidence_graph": {
+    "nodes": [
+      { "id": "image", "risk": 0.91 },
+      { "id": "video", "risk": 0.68 },
+      { "id": "audio", "risk": 0.77 },
+      { "id": "text", "risk": 0.3 }
+    ],
+    "edges": [
+      { "from": "image", "to": "text", "conflict": 0.79 },
+      { "from": "audio", "to": "text", "conflict": 0.66 },
+      { "from": "video", "to": "text", "conflict": 0.71 }
+    ]
+  },
+  "explanation": "Multiple artifacts show synthetic indicators and conflict with the claim. The low trust score reflects substantial cross-modal inconsistency; confidence describes the system's confidence in this assessment, not proof that the conclusion is true."
+}
