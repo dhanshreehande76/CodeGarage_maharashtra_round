@@ -1,0 +1,64 @@
+# ---------- Python ----------
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ---------- Node / React ----------
+node_modules/
+dist/
+build/
+.vite/
+npm-debug.log*
+
+# ---------- Secrets ----------
+.env
+.env.*
+!.env.example
+
+# ---------- Local database ----------
+*.db
+*.sqlite
+*.sqlite3
+
+# ---------- Datasets (never commit) ----------
+datasets/raw/
+datasets/processed/
+
+# ---------- Uploaded evidence ----------
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# ---------- Model weights and caches ----------
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.onnx
+*.bin
+*.npy
+*.npz
+.cache/
+huggingface/
+
+# ---------- Large media (re-allow demo cases below) ----------
+*.mp4
+*.avi
+*.mov
+*.wav
+*.mp3
+!datasets/custom_cases/**
+
+# ---------- Logs and temp ----------
+*.log
+tmp/
+temp/
+
+# ---------- Editor / OS ----------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
