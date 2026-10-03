@@ -49,3 +49,7 @@ def test_video_manipulation_prob_counts():
         [{"pair": "video-text", "score": 0.2, "finding": "Frames do not support the claim"}],
     )
     assert out["verdict"] == "manipulated"
+
+def test_findings_alone_can_drive_verdict():
+    out = fuse({}, [{"pair": "image-text", "score": 0.1, "finding": "Image content does not match the claim"}])
+    assert out["verdict"] == "manipulated"

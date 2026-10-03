@@ -79,7 +79,7 @@ def fuse(results: dict, findings: list) -> dict:
 
     # Abstain (Uncertain / Requires Verification)
     reason = None
-    if not risks:
+    if not risks and not findings:
         reason = "No analyzable evidence was provided."
     elif verdict == "authentic" and not findings:
         reason = "Only a single source was checked, so consistency could not be verified."
