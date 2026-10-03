@@ -1,0 +1,39 @@
+{
+  "verdict": "coordinated_synthetic",
+  "leaning": "coordinated_synthetic",
+  "trust_score": 0.16,
+  "confidence": 0.97,
+  "abstain_reason": null,
+  "modalities": {
+    "image": {
+      "synthetic_prob": 0.91,
+      "signals": ["AI-generator likelihood high", "No camera EXIF data"]
+    },
+    "audio": {
+      "spoof_prob": 0.77,
+      "transcript": "Sample transcript of the uploaded audio.",
+      "signals": ["Synthetic speech characteristics"]
+    },
+    "text": {
+      "claims": ["Sample claim text."],
+      "entities": { "places": [], "dates": [], "people": [] }
+    }
+  },
+  "cross_modal": [
+    { "pair": "image-text", "score": 0.21, "finding": "Image content does not match the claim" },
+    { "pair": "audio-text", "score": 0.34, "finding": "Transcript contradicts the claim" }
+  ],
+  "evidence_graph": {
+    "nodes": [
+      { "id": "image", "risk": 0.91 },
+      { "id": "audio", "risk": 0.77 },
+      { "id": "text", "risk": 0.79 }
+    ],
+    "edges": [
+      { "from": "image", "to": "text", "conflict": 0.79 },
+      { "from": "audio", "to": "text", "conflict": 0.66 }
+    ]
+  },
+  "explanation": "image shows strong synthetic indicators (91%); audio shows strong synthetic indicators (77%); Image content does not match the claim; Transcript contradicts the claim.",
+  "notes": []
+}
