@@ -19,6 +19,12 @@ def _load(module_path: str, func_name: str):
     except Exception:
         return None
 
+def _normalize(name: str, result):
+    """Make analyzer output match the frontend's field names."""
+    if name == "video" and isinstance(result, dict):
+        if result.get("manipulation_prob") is None and result.get("synthetic_prob") is not None:
+            result["manipulation_prob"] = result["synthetic_prob"]
+    return result
 
 def run_pipeline(case: dict) -> dict:
     """case = {"image": path|None, "video": path|None, "audio": path|None, "claim": str|None}"""
@@ -33,7 +39,7 @@ def run_pipeline(case: dict) -> dict:
             notes.append(f"{name} analyzer not available yet")
             continue
         try:
-            results[name] = analyzer(path)
+             results[name] = _normalize(name, analyzer(path))
         except Exception as exc:
             notes.append(f"{name} analysis failed: {exc}")
 

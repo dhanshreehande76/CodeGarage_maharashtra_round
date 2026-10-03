@@ -8,16 +8,25 @@ CONFLICT_T = 0.6                 # conflict at or above this = "strong conflict"
 AMBIG_LOW, AMBIG_HIGH = 0.4, 0.6 # values in this band are borderline
 ABSTAIN_BELOW = 0.5              # confidence below this -> uncertain
 
-RISK_KEYS = {"image": "synthetic_prob", "video": "synthetic_prob", "audio": "spoof_prob"}
+RISK_KEYS = {
+    "image": ("synthetic_prob",),
+    "video": ("manipulation_prob", "synthetic_prob"),  # frontend name first, old name accepted
+    "audio": ("spoof_prob",),
+}
+
 
 
 def modality_risks(results: dict) -> dict:
     """Only modalities whose analyzer returned a real probability count as evidence."""
     risks = {}
-    for name, key in RISK_KEYS.items():
+    for name, keys in RISK_KEYS.items():
         res = results.get(name)
-        if res and res.get(key) is not None:
-            risks[name] = float(res[key])
+        if not res:
+            continue
+        for key in keys:
+            if res.get(key) is not None:
+                risks[name] = float(res[key])
+                break
     return risks
 
 

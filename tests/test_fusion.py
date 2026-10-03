@@ -42,3 +42,10 @@ def test_uncertain_borderline():
 def test_uncertain_single_source():
     out = run(0.05)
     assert out["verdict"] == "uncertain"
+
+def test_video_manipulation_prob_counts():
+    out = fuse(
+        {"video": {"manipulation_prob": 0.9}},
+        [{"pair": "video-text", "score": 0.2, "finding": "Frames do not support the claim"}],
+    )
+    assert out["verdict"] == "manipulated"
