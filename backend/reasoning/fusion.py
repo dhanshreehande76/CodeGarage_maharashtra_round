@@ -23,10 +23,16 @@ def modality_risks(results: dict) -> dict:
         res = results.get(name)
         if not res:
             continue
+        value = None
         for key in keys:
             if res.get(key) is not None:
-                risks[name] = float(res[key])
+                value = res[key]
                 break
+        # The real image analyzer nests its probability inside "prediction"
+        if value is None and name == "image":
+            value = (res.get("prediction") or {}).get("ai_generated_probability")
+        if value is not None:
+            risks[name] = float(value)
     return risks
 
 

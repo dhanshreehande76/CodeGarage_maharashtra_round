@@ -53,3 +53,9 @@ def test_video_manipulation_prob_counts():
 def test_findings_alone_can_drive_verdict():
     out = fuse({}, [{"pair": "image-text", "score": 0.1, "finding": "Image content does not match the claim"}])
     assert out["verdict"] == "manipulated"
+
+def test_image_real_analyzer_schema():
+    results = {"image": {"prediction": {"ai_generated_probability": 0.90}}}
+    out = fuse(results, [])
+    assert out["risks"]["image"] == 0.90
+    assert out["verdict"] == "manipulated"

@@ -175,7 +175,12 @@ def run_crossmodal(case: dict, modality_results: dict, text_result: dict | None)
         if finding:
             findings.append(finding)
 
-    transcript = ((modality_results.get("audio") or {}).get("transcript") or "").strip()
+        audio = modality_results.get("audio") or {}
+    transcript = (
+        audio.get("transcript")
+        or (audio.get("transcription") or {}).get("text")
+        or ""
+    ).strip()
     if transcript:
         finding = _safe("audio-text", transcript_claim_finding, transcript, claims)
         if finding:
