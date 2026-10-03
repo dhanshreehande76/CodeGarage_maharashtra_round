@@ -4,4 +4,16 @@ python-multipart
 pillow
 numpy
 scikit-learn
-pytest
+
+# --- Image analyzer (backend/analyzers/image) ---
+# transformers>=5.4.0 is required by builderorderless/CommunityForensics-Deepfake-Det-ViT
+# for correct preprocessing; torchvision enables the default image-processor backend.
+torch>=2.4
+torchvision
+transformers>=5.4.0
+Pillow>=10.0
+numpy>=1.26
+scikit-learn>=1.3
+
+# --- Tests ---
+pytest>=8.0

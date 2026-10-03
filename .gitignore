@@ -62,3 +62,6 @@ temp/
 .idea/
 .DS_Store
 Thumbs.db
+
+datasets/custom_cases/*
+!datasets/custom_cases/.gitkeep
