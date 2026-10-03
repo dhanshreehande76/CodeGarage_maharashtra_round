@@ -1,0 +1,9 @@
+torch
+transformers
+open_clip_torch
+sentence-transformers
+openai-whisper
+opencv-python
+librosa
+exifread
+spacy
