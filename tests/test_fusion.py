@@ -59,3 +59,8 @@ def test_image_real_analyzer_schema():
     out = fuse(results, [])
     assert out["risks"]["image"] == 0.90
     assert out["verdict"] == "manipulated"
+
+def test_abstention_never_shows_high_trust():
+    out = run(0.05)  # single source, abstains
+    assert out["verdict"] == "uncertain"
+    assert out["trust_score"] <= 0.5

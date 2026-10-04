@@ -105,6 +105,7 @@ def fuse(results: dict, findings: list) -> dict:
     leaning = verdict
     if reason:
         verdict = "uncertain"
+        trust_score = min(trust_score, 0.5)  # an abstention is never shown as "high trust"  # an abstention is never shown as "high trust"
 
     return {
         "verdict": verdict,
