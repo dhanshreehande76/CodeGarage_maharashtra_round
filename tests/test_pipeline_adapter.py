@@ -20,3 +20,11 @@ def test_adapt_handles_failed_analysis():
     out = _adapt_image_result({"prediction": None, "evidence": [], "metadata": None})
     assert out["synthetic_prob"] is None
     assert out["signals"] == []
+
+from backend.pipeline import _normalize
+
+
+def test_audio_adapter_exposes_transcript_and_signals():
+    out = _normalize("audio", {"spoof_prob": 0.3, "transcription": {"text": "hello there"}})
+    assert out["transcript"] == "hello there"
+    assert out["signals"]

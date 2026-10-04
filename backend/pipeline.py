@@ -79,11 +79,38 @@ def analyze_image(path: str) -> dict:
 
 # ---------------- Other normalisation ----------------
 
+def _evidence_signals(result: dict, limit: int = 4) -> list:
+    out = []
+    for item in result.get("evidence") or []:
+        description = item.get("description")
+        if description and item.get("severity") in ("low", "medium", "high"):
+            out.append(description)
+    return out[:limit]
+
+
 def _normalize(name: str, result):
     """Make analyzer output match the frontend's field names."""
-    if name == "video" and isinstance(result, dict):
+    if not isinstance(result, dict):
+        return result
+
+    if name == "video":
         if result.get("manipulation_prob") is None and result.get("synthetic_prob") is not None:
             result["manipulation_prob"] = result["synthetic_prob"]
+        if "signals" not in result:
+            result["signals"] = _evidence_signals(result)
+
+    elif name == "audio":
+        transcript = ((result.get("transcription") or {}).get("text") or "").strip()
+        result["transcript"] = transcript
+        spoof = result.get("spoof_prob")
+        signals = []
+        if spoof is not None:
+            level = "high" if spoof >= 0.6 else "low"
+            signals.append(f"Synthetic-speech likelihood {spoof:.0%} ({level})")
+        if transcript:
+            signals.append("Speech transcribed successfully")
+        result["signals"] = signals
+
     return result
 
 

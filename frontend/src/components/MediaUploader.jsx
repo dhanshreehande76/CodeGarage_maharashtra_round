@@ -65,7 +65,7 @@ function MediaUploader({ onAnalyze }) {
           Analyze evidence
         </button>
         {notice && <p role="status" className="text-xs leading-5 text-amber-800 dark:text-amber-300">{notice}</p>}
-        <p className="text-xs leading-5 text-slate-600 dark:text-slate-400">Files remain in this browser. Results use a sample analysis response.</p>
+        <p className="text-xs leading-5 text-slate-600 dark:text-slate-400">Files are sent to the local TrustLayer backend for analysis.</p>
       </form>
     </section>
   )

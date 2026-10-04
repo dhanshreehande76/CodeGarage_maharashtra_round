@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import response from '../../docs/mock_response.json'
+import { analyzeCase } from './services/api.js'
 import EvidenceGraph from './components/EvidenceGraph.jsx'
 import EvidenceMediaRail from './components/EvidenceMediaRail.jsx'
 import ExplainabilityPanel from './components/ExplainabilityPanel.jsx'
@@ -24,28 +24,37 @@ function formatPercent(value) {
 function App() {
   const [stage, setStage] = useState('upload')
   const [evidence, setEvidence] = useState(null)
+    const [response, setResponse] = useState(null)
+  const [error, setError] = useState('')
   const [highlightedTypes, setHighlightedTypes] = useState([])
-  const verdict = verdictLabels[response.verdict] ?? response.verdict
-  const verdictStyle = getVerdictStyle(response.verdict)
+  const verdict = response ? (verdictLabels[response.verdict] ?? response.verdict) : ''
+  const verdictStyle = getVerdictStyle(response?.verdict ?? 'uncertain')
 
-  useEffect(() => {
-    if (stage !== 'loading') return undefined
-    const timeout = window.setTimeout(() => setStage('results'), 1800)
-    return () => window.clearTimeout(timeout)
-  }, [stage])
 
   useEffect(() => () => {
     Object.values(evidence?.previews ?? {}).forEach((url) => URL.revokeObjectURL(url))
   }, [evidence])
 
-  function handleAnalyze({ files, claim }) {
+    async function handleAnalyze({ files, claim }) {
     const previews = Object.fromEntries(Object.entries(files).map(([type, file]) => [type, URL.createObjectURL(file)]))
     setEvidence({ files, previews, claim })
+    setResponse(null)
+    setError('')
     setStage('loading')
+    try {
+      const result = await analyzeCase({ ...files, claim })
+      setResponse(result)
+      setStage('results')
+    } catch (err) {
+      setError(err?.message || 'Analysis failed')
+      setStage('error')
+    }
   }
 
   function startNewInvestigation() {
     setEvidence(null)
+    setResponse(null)
+    setError('')
     setHighlightedTypes([])
     setStage('upload')
   }
@@ -64,7 +73,7 @@ function App() {
           <div className="flex items-center gap-3">
             <div className="hidden items-center gap-2 rounded-sm border border-amber-300 bg-amber-50 px-2.5 py-1.5 font-mono text-[9px] uppercase tracking-wider text-amber-900 sm:flex dark:border-amber-900 dark:bg-amber-950/60 dark:text-amber-200">
               <span className="size-1.5 rounded-full bg-amber-600 dark:bg-amber-400" />
-              Sample analysis
+              Live analysis
             </div>
             <ThemeToggle />
           </div>
@@ -102,7 +111,18 @@ function App() {
               </div>
             ))}
           </div>
-          <p className="mt-5 font-mono text-[10px] uppercase tracking-wider text-slate-600 dark:text-slate-400">Loading the local demonstration response</p>
+          <p className="mt-5 font-mono text-[10px] uppercase tracking-wider text-slate-600 dark:text-slate-400">Running on the local TrustLayer backend. The first analysis can take a minute while models load.</p>
+        </main>
+      )}
+
+      {stage === 'error' && (
+        <main className="mx-auto flex min-h-[calc(100vh-57px)] max-w-xl flex-col items-center justify-center px-5 py-12 text-center">
+          <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-rose-800 dark:text-rose-400">Analysis failed</p>
+          <h1 className="mt-2 text-2xl font-semibold text-slate-900 dark:text-slate-100">The analysis could not be completed</h1>
+          <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-400">{error}. Make sure the backend is running at http://127.0.0.1:8000, then try again.</p>
+          <button className="mt-6 rounded-sm bg-teal-800 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-900 dark:bg-cyan-500 dark:text-slate-950 dark:hover:bg-cyan-400" onClick={startNewInvestigation}>
+            Back to upload
+          </button>
         </main>
       )}
 
@@ -110,16 +130,18 @@ function App() {
         <main id="dashboard" className="mx-auto max-w-[1680px] px-4 py-5 sm:px-6 lg:px-8">
           <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="mb-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-teal-800 dark:text-cyan-400">Investigation / local sample</p>
+              <p className="mb-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-teal-800 dark:text-cyan-400">Investigation / live analysis</p>
               <h1 className="text-xl font-semibold text-slate-900 sm:text-2xl dark:text-slate-100">Case assessment</h1>
             </div>
             <button className="rounded-sm border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-800 transition-colors hover:border-teal-700 hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-cyan-400 dark:hover:bg-slate-800 dark:focus-visible:ring-cyan-400" onClick={startNewInvestigation}>
               New investigation
             </button>
           </div>
-          <p role="note" className="mb-5 rounded-sm border border-amber-300 bg-amber-50 px-4 py-2.5 text-xs leading-5 text-amber-950 dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-200">
-            Demonstration only: this assessment is loaded from a fixed sample response. Submitted files and claim are not analyzed.
-          </p>
+                    {response.abstain_reason && (
+            <p role="note" className="mb-5 rounded-sm border border-amber-300 bg-amber-50 px-4 py-2.5 text-xs leading-5 text-amber-950 dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-200">
+              {response.abstain_reason}
+            </p>
+          )}
 
           <div className="grid items-start gap-5 lg:grid-cols-[minmax(290px,0.82fr)_minmax(0,1.18fr)] xl:gap-6">
             <div className="lg:sticky lg:top-[76px] lg:max-h-[calc(100vh-92px)] lg:overflow-y-auto lg:pr-1">
@@ -164,7 +186,7 @@ function App() {
 }
 
 function getVerdictStyle(verdict) {
-  const normalizedVerdict = verdict.toLowerCase()
+  const normalizedVerdict = String(verdict).toLowerCase()
   if (normalizedVerdict === 'authentic') return { border: 'border-green-700 dark:border-green-500', bar: 'bg-green-600 dark:bg-green-400', badge: 'border-green-700 bg-green-100 text-green-900 dark:border-green-700 dark:bg-green-950 dark:text-green-300' }
   if (normalizedVerdict.startsWith('uncertain') || normalizedVerdict.includes('requires_verification') || normalizedVerdict.includes('requires verification')) return { border: 'border-amber-600 dark:border-amber-500', bar: 'bg-amber-500 dark:bg-amber-400', badge: 'border-amber-700 bg-amber-100 text-amber-950 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-200' }
   return { border: 'border-rose-700 dark:border-rose-500', bar: 'bg-rose-700 dark:bg-rose-500', badge: 'border-rose-800 bg-rose-100 text-rose-950 dark:border-rose-700 dark:bg-rose-950 dark:text-rose-200' }
