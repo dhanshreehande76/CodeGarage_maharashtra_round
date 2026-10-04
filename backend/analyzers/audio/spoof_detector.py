@@ -26,11 +26,11 @@ def _get_device() -> str:
 @lru_cache(maxsize=1)
 def _load_model() -> tuple[Any, Any, str]:
     """Load the anti-spoofing model once and reuse it."""
-    from transformers import AutoModelForAudioClassification, AutoProcessor
+    from transformers import AutoFeatureExtractor, AutoModelForAudioClassification
 
     device = _get_device()
     try:
-        processor = AutoProcessor.from_pretrained(MODEL_ID)
+        processor = AutoFeatureExtractor.from_pretrained(MODEL_ID)
         model = AutoModelForAudioClassification.from_pretrained(MODEL_ID)
         model.to(device)
         model.eval()
